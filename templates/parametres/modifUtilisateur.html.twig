@@ -1,0 +1,53 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+{% block title %}Paramètres . Compte{% endblock %}
+{% block mainTitle %}Compte{% endblock %}
+
+{% block mainBody %}
+    {% for message in app.flashes('message') %}
+        <div class="alert alert-success" role="alert">
+          {{ message }}
+        </div>
+    {% endfor %}
+    <form method="post" action="{{ path('utilisateur') }}">
+        <div class="mb-3">
+            <label for="Email" class="form-label" >Adresse email</label>
+            <input name="email" type="email" class="form-control" id="Email" aria-describedby="emailHelp" value="{{ email }}">
+            {% for message in app.flashes('emailError') %}
+                <div style="color: red">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="mb-3">
+            <label for="currentPassword" class="form-label">Mot de passe actuel</label>
+            <input name="currentPassword" type="password" class="form-control" id="currentPassword" >
+            {% for message in app.flashes('currentPasswordError') %}
+                <div style="color: red">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label for="newPassword" class="form-label">Nouveau mot de passe</label>
+            <input name="newPassword" type="password" class="form-control" id="newPassword" >
+            {% for message in app.flashes('newPasswordError') %}
+                <div style="color: red">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            <label for="confirmNewPassword" class="form-label">Confirmez votre nouveau mot de passe</label>
+            <input name="confirmNewPassword" type="password" class="form-control" id="confirmNewPassword" >
+            {% for message in app.flashes('confirmNewPasswordError') %}
+                <div style="color: red">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-success btn-lg my-3">Mettre à jour</button>
+    </form>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+<!-- Modal HTML -->
+<div id="payer" class="modal fade my-auto">
+    <div class="modal-dialog modal-confirm ">
+        <div class="modal-content">
+            <div class="modal-body ">
+                <h3>Sélectionner la date de paiement (FA{{ deposit.numerotation }})</h3>
+                <form action="{{ path('payer_facture_acompte',{'id':deposit.id}) }}" method="post">
+                    <div><input name="payed_date" class="form-control my-5" type="date" value="{{ "now"|date("Y-m-d") }}"></div>
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-success">Marquer comme payée</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

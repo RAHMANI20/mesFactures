@@ -1,0 +1,38 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+
+{% block title %}Paramètres . Supprimer mon compte {% endblock %}
+{% block mainTitle %}Supprimer mon compte{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="my-3">
+                    <div class="mb-3">
+                        {{ form_row(form.raison) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.remarque) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.password) }}
+                        {% for message in app.flashes('passwordError') %}
+                            <div style="color: red">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-danger btn-lg my-3">Supprimer mon compte</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

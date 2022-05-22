@@ -1,0 +1,75 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+
+{% block title %}Paramètres . compte bancaire de {{ bankAccount.titulaire }}{% endblock %}
+{% block mainTitle %}Compte bancaire de {{ bankAccount.titulaire }}{% endblock %}
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                    <fieldset>
+                        <legend class="my-5">Informations</legend>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Libellé</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ bankAccount.libelle }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">IBAN</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ bankAccount.iban }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">BIC</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ bankAccount.bic }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Titulaire</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ bankAccount.titulaire }}
+                            </div>
+                        </div>
+                    </fieldset>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+            <li><a class="dropdown-item" href="{{ path('edit_compte_bancaire',{'id':bankAccount.id}) }}">Modifier</a></li>
+            <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+        </ul>
+    </div>
+
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'Voulez-vous vraiment supprimer ce compte bancaire ?','route':path('delete_compte_bancaire',{'id':bankAccount.id})} %}
+{% endblock %}

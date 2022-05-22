@@ -1,0 +1,315 @@
+{% extends 'default/dashboard.html.twig' %}
+
+
+{% block title %}
+    {% if billCredit.state == 'provisoire' %}
+        Avoir {{ billCredit.state }}
+    {% endif %}
+    {% if billCredit.state == 'finalisé' or billCredit.state == 'remboursé' %}
+        Avoir A{{ billCredit.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainTitle %}
+    {% if billCredit.state == 'provisoire' %}
+        Facture {{ billCredit.state }}
+    {% endif %}
+    {% if billCredit.state == 'finalisé' or billCredit.state == 'remboursé' %}
+        Avoir A{{ billCredit.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                    <fieldset>
+                        <legend class="my-5">Informations</legend>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Statut:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.state }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Crée le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getCreatedAt()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Dernière modification le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getLastUpdate()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        {% if billCredit.state == 'finalisé' or billCredit.state == 'remboursé' %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Finalisé le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.getFinalizationAt()|date('d-m-y à h:i:s') }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        {% if billCredit.state == 'remboursé'%}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Remboursé le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.getRefundedAt()|date('d-m-y') }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Destinataire</legend>
+                        {% if billCredit.businessClient != null %}
+                            {% set destinataire = billCredit.businessClient %}
+                            {% set vue = 'vue_proClient' %}
+                        {% elseif billCredit.particularClient != null %}
+                            {% set destinataire = billCredit.particularClient %}
+                            {% set vue = 'vue_parClient' %}
+                        {% else %}
+                            {% set destinataire = billCredit.company %}
+                            {% set vue = 'vue_societe' %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Destinataire:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                <a style="text-decoration: none" href="{{ path(vue,{'id':destinataire.id}) }}">{{ destinataire }}</a>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Détail</legend>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Prix unitaire HT</th>
+                                <th scope="col">Quantité</th>
+                                {% if billCredit.getTvaNonApplicable() == false %}
+                                    <th scope="col">TVA</th>
+                                {% endif %}
+                                <th scope="col">Réduction</th>
+                                <th scope="col">Total HT</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for article in billCredit.articles %}
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td>{{ article.getTypeArticle() }}</td>
+                                    <td>{{ article.description }}</td>
+                                    <td>{{ article.getPrixHt() }} €</td>
+                                    <td>{{ article.quantite }}</td>
+                                    {% if billCredit.getTvaNonApplicable() == false %}
+                                        <td>{{ article.tva }}%</td>
+                                    {% endif %}
+                                    <td>{{ article.reduction }}%</td>
+                                    <td>{{ article.calculTotalHt() }} €</td>
+                                </tr>
+                            {% endfor %}
+                            {% for disbursement in billCredit.disbursements %}
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td>Débours</td>
+                                    <td>{{ disbursement.description }}</td>
+                                    <td></td>
+                                    <td></td>
+                                    {% if billCredit.getTvaNonApplicable() == false %}
+                                        <td></td>
+                                    {% endif %}
+                                    <td></td>
+                                    <td>{{ disbursement.getMontantHt() }} €</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if billCredit.getTvaNonApplicable() == false %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total HT:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculTotalHt() }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">TVA:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculTva }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Débours:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculDebours() }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total TTC:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculTtc() + billCredit.calculDebours()}} €
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">{{ text_tva }}</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Débours:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculDebours() }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ billCredit.calculTotalHt() + billCredit.calculDebours()}} €
+                                </div>
+                            </div>
+                        {% endif %}
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Conditions</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Conditions de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getConditionReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Mode de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getModeReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Intérêts de retard:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getInteretRetard() }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Textes affichés sur le document</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte d'introduction:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getTextIntroduction() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte de conclusion:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getTextConclusion() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Pied de page:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ billCredit.getPiedPage() }}
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+            {% if billCredit.state == 'provisoire' %}
+                <li><a class="dropdown-item" href="#finalise" data-toggle="modal">Finaliser</a></li>
+                <li><a class="dropdown-item" href="{{ path('edit_avoir',{'id':billCredit.id}) }}">Modifier</a></li>
+                <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+                <hr>
+            {% endif %}
+            {% if billCredit.state == 'finalisé' %}
+                <li><a class="dropdown-item trigger-btn" href="#rembourser" data-toggle="modal">Marquer comme remboursé</a></li>
+                <hr>
+            {% endif %}
+            {% if billCredit.state == 'remboursé' %}
+                <li><a class="dropdown-item" href="{{ path('annuler_remboursement_avoir',{'id':billCredit.id}) }}">Annuler le remboursement</a></li>
+                <hr>
+            {% endif %}
+            <li><a class="dropdown-item" href="{{ path('dupliquer_avoir_devis',{'id':billCredit.id}) }}">Dupliquer en devis</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_avoir_facture',{'id':billCredit.id}) }}">Dupliquer en facture</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_avoir_opportunite',{'id':billCredit.id}) }}">Dupliquer en opportunité</a></li>
+
+
+
+        </ul>
+    </div>
+    {% include 'confirmation/vueRemboursementAvoir.html.twig'  %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'voulez vous vraiment supprimer cet avoir ?','route':path('delete_avoir',{'id':billCredit.id})} %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'finalise','message':"<p>Vous êtes sur le point de transformer ce brouillon en avoir officiel. Cela lui attribuera un numéro et vous permettra de l'envoyer à votre client.</p><p>Cette action n'est pas réversible. Vous ne pourrez plus modifier ou effacer cet avoir. Confirmez-vous cette action ?</p>" ,'route':path('finaliser_avoir',{'id':billCredit.id}) } %}
+{% endblock %}

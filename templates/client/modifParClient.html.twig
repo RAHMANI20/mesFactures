@@ -1,0 +1,38 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Modifier {{ particularClient.prenom ~ ' ' ~ particularClient.nom}}{% endblock %}
+{% block mainTitle %}Modifier {{ particularClient.prenom ~ ' ' ~ particularClient.nom}}{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="mb-3">
+                    <legend>Informations</legend>
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.prenom) }}
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.fonction) }}
+                    {{ form_row(form.langue) }}
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Coordonnées du client</legend>
+                    {{ form_row(form.adresse) }}
+                    {{ form_row(form.complement_adresse) }}
+                    {{ form_row(form.code_postal) }}
+                    {{ form_row(form.ville) }}
+                    {{ form_row(form.pays) }}
+                    {{ form_row(form.site_internet) }}
+                    {{ form_row(form.num_telephone) }}
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Modifier le client</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+
+{% endblock %}

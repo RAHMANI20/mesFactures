@@ -1,0 +1,33 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+
+{% block title %}Paramètres . Préférences pour les factures {% endblock %}
+{% block mainTitle %}Préférences pour les factures{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="my-3">
+                    <div class="mb-3">
+                        {{ form_row(form.text_introduction) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.text_conclusion) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.pied_page) }}
+                    </div>
+
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Enregistrer</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

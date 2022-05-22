@@ -1,0 +1,33 @@
+{% extends 'client/ajoutClient.html.twig' %}
+
+{% block clientForm %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="mb-3">
+                    <legend>Informations</legend>
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.prenom) }}
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.fonction) }}
+                    {{ form_row(form.langue) }}
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Coordonnées du client</legend>
+                    {{ form_row(form.num_telephone) }}
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Société</legend>
+                    {{ form_row(form.societe) }}
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Créer le client</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

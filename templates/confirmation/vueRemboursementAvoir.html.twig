@@ -1,0 +1,18 @@
+<!-- Modal HTML -->
+<div id="rembourser" class="modal fade my-auto">
+    <div class="modal-dialog modal-confirm ">
+        <div class="modal-content">
+            <div class="modal-body ">
+                <h3>Sélectionner la date de remboursement (A{{ billCredit.numerotation }})</h3>
+                <form action="{{ path('rembourser_avoir',{'id':billCredit.id}) }}" method="post">
+                    <div><input name="refunded_date" class="form-control my-5" type="date" value="{{ "now"|date("Y-m-d") }}"></div>
+                    <div class="modal-footer justify-content-center">
+                        <button class="btn btn-danger" data-dismiss="modal">Annuler</button>
+                        <button type="submit" class="btn btn-success">Marquer comme remboursé</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

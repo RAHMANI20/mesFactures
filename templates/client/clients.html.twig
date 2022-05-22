@@ -1,0 +1,37 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Clients{% endblock %}
+{% block mainTitle %}Clients({{ (businessClients|length) + (particularClients|length)}}){% endblock %}
+{% block mainBody %}
+    <div class="container p-0">
+        <div class="row">
+            {% for businessClient in businessClients %}
+                <div class="col-12 col-md-12 col-lg-4 my-3">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_proClient',{'id':businessClient.id}) }}">{{ businessClient.prenom ~ ' ' ~ businessClient.nom}}</a></h6>
+                            <p style="color: #727272">{{ businessClient.societe }}</p>
+                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-envelope"></i> {{ businessClient.email }}</p></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            {% for particularClient in particularClients %}
+                <div class="col-12 col-md-12 col-lg-4 my-3">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            <h6 class="card-title mb-0"><a style="text-decoration: none;color: #333333" href="{{ path('vue_parClient',{'id':particularClient.id}) }}">{{ particularClient.prenom ~ ' ' ~ particularClient.nom}}</a></h6>
+                            <p style="color: #727272">Particulier</p>
+                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-envelope"></i> {{ particularClient.email }}</p></div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_client') }}" class="btn btn-sm btn-outline-secondary">Ajouter un client</a>{% endblock %}
+{% block export %}<button type="button" class="btn btn-sm btn-outline-secondary">Exporter les clients</button>{% endblock %}

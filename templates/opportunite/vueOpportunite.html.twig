@@ -1,0 +1,143 @@
+{% extends 'default/dashboard.html.twig' %}
+
+
+{% block title %}
+    {{ opportunity.intitule }}
+{% endblock %}
+
+{% block mainTitle %}
+    {{ opportunity.intitule }}
+{% endblock %}
+
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                    <fieldset>
+                        <legend class="my-5">Informations</legend>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Statut:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ opportunity.state }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Montant:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ opportunity.getMontantht() }} € HT
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">date de signature prévue:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ opportunity.getMoisSignature() ~ ' ' ~ opportunity.getAnneeSignature() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Probabilité:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ opportunity.probabilite }}%
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Notes:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ opportunity.notes }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Destinataire</legend>
+                        {% if opportunity.businessClient != null %}
+                            {% set destinataire = opportunity.businessClient %}
+                            {% set vue = 'vue_proClient' %}
+                        {% elseif opportunity.particularClient != null %}
+                            {% set destinataire = opportunity.particularClient %}
+                            {% set vue = 'vue_parClient' %}
+                        {% else %}
+                            {% set destinataire = opportunity.company %}
+                            {% set vue = 'vue_societe' %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Destinataire:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                <a style="text-decoration: none" href="{{ path(vue,{'id':destinataire.id}) }}">{{ destinataire }}</a>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+
+
+
+                    <fieldset>
+                        <legend class="my-5">Documents liés </legend>
+
+                    </fieldset>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+
+            <li><a class="dropdown-item" href="{{ path('edit_opportunite',{'id':opportunity.id}) }}">Modifier</a></li>
+            <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+            <hr>
+            {% if opportunity.state == 'En cours' %}
+                <li><a class="dropdown-item" href="{{ path('remporter_opportunite',{'id':opportunity.id}) }}" >Marquer comme Remporté</a></li>
+                <li><a class="dropdown-item" href="{{ path('perdre_opportunite',{'id':opportunity.id}) }}" >Marquer comme Perdu</a></li>
+            {% endif %}
+            {% if opportunity.state == 'Remporté' %}
+                <li><a class="dropdown-item" href="{{ path('enCours_opportunite',{'id':opportunity.id}) }}" >Marquer comme en cours</a></li>
+                <li><a class="dropdown-item" href="{{ path('perdre_opportunite',{'id':opportunity.id}) }}" >Marquer comme Perdu</a></li>
+            {% endif %}
+            {% if opportunity.state == 'Perdu' %}
+                <li><a class="dropdown-item" href="{{ path('enCours_opportunite',{'id':opportunity.id}) }}" >Marquer comme en cours</a></li>
+                <li><a class="dropdown-item" href="{{ path('remporter_opportunite',{'id':opportunity.id}) }}" >Marquer comme Remporté</a></li>
+            {% endif %}
+            <hr>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_opportunite',{'id':opportunity.id}) }}">Dupliquer l'opportunité</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_opportunite_devis',{'id':opportunity.id}) }}">Dupliquer en devis</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_opportunite_facture',{'id':opportunity.id}) }}">Dupliquer en facture</a></li>
+
+
+        </ul>
+    </div>
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'Voulez-vous vraiment supprimer cette opportunité ?','route':path('delete_opportunite',{'id':opportunity.id})} %}
+{% endblock %}

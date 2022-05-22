@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Factures{% endblock %}
+
+{% block body %}
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('clients') }}">
+                                Clients
+                            </a><a type="button" href="{{ path('add_client') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('societes') }}">
+                                Sociétés
+                            </a><a type="button" href="{{ path('add_societe') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('devis') }}">
+                                Devis
+                            </a><a type="button" href="{{ path('add_devis') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('factures') }}">
+                                Factures
+                            </a><a type="button" href="{{ path('add_facture') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('avoirs') }}">
+                                Avoirs
+                            </a><a type="button" href="{{ path('add_avoir') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('factures_acompte') }}">
+                                Factures d'acompte
+                            </a><a type="button" href="{{ path('add_facture_acompte') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('opportunites') }}">
+                                Opportunités
+                            </a><a type="button" href="{{ path('add_opportunite') }}" class="position-absolute end-0"><i style="color: forestgreen" class="fa-solid fa-square-plus fa-lg"></i></a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('preferences_generales') }}">
+                                <i class="fa-solid fa-gear"></i> Paramètres
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link" href="{{ path('app_logout') }}">
+                                <i class="fa-solid fa-arrow-right-from-bracket"></i> Deconnexion
+                            </a>
+                        </li>
+                    </ul>
+
+
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">{% block mainTitle %}Dashboard{% endblock %}</h1>
+
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            {% block ajout %}{% endblock %}
+                            {% block export %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+                {% block navbar %}{% endblock %}
+                {% block mainBody %}{% endblock %}
+                <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+
+
+            </main>
+        </div>
+    </div>
+
+
+
+
+
+
+
+{% endblock %}

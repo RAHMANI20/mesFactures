@@ -1,0 +1,27 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+{% block title %}Paramètres . Modifier le compte bancaire{% endblock %}
+{% block mainTitle %}Modifier le compte bancaire "{{ bankAccount.libelle }}"{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="mb-3">
+
+                    {{ form_row(form.iban) }}
+                    {{ form_row(form.bic) }}
+                    {{ form_row(form.titulaire) }}
+                    {{ form_row(form.libelle) }}
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Enregistrer</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

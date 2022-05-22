@@ -1,0 +1,84 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Avoirs{% endblock %}
+{% block mainTitle %}Avoirs({{ (billCredits|length) }}){% endblock %}
+{% block navbar %}
+    <header class="navbar navbar-light  shadow mb-5" style="border-radius: 10px;background-color:#3f038f">
+
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('avoirs') }}">TOUS</a>
+            </div>
+        </div>
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('avoirs_provisoires') }}">PROVISOIRES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('avoirs_finalises') }}">FINALISÉS</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('avoirs_rembourses') }}">REMBOURSÉS</a>
+            </div>
+        </div>
+
+    </header>
+
+
+{% endblock %}
+{% block mainBody %}
+
+    <div class="container p-0">
+        <div class="row">
+            {% for billCredit in billCredits %}
+                {% if billCredit.businessClient != null %}
+                    {% set destinataire = billCredit.businessClient %}
+                {% elseif billCredit.particularClient != null %}
+                    {% set destinataire = billCredit.particularClient %}
+                {% else %}
+                    {% set destinataire = billCredit.company %}
+                {% endif %}
+                <div class="col-12 col-md-12  my-1">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            {% if billCredit.state == 'finalisé' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">A{{ billCredit.numerotation }}</a> <span style="color: #2470dc">Finalisé</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if billCredit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% elseif  billCredit.state == 'remboursé' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">A{{ billCredit.numerotation }}</a> <span style="color: forestgreen">Remboursé</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if billCredit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ billCredit.getRefundedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ billCredit.getRefundedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% else %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">{{ billCredit.state}}</a></h6>
+                                <p style="color: #727272">{{ destinataire }}</p>
+                                {% if billCredit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC &nbsp; <i class="fa-regular fa-calendar"></i> {{ billCredit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ billCredit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_avoir') }}" class="btn btn-sm btn-outline-secondary">Créer un avoir</a>{% endblock %}
+{% block export %}<button type="button" class="btn btn-sm btn-outline-secondary">Exporter les avoirs</button>{% endblock %}

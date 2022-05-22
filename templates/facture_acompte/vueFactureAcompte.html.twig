@@ -1,0 +1,313 @@
+{% extends 'default/dashboard.html.twig' %}
+
+
+{% block title %}
+    {% if deposit.state == 'provisoire' %}
+        Facture d'acompte {{ deposit.state }}
+    {% endif %}
+    {% if deposit.state == 'finalisée' or deposit.state == 'payée' %}
+        Facture d'acompte FA{{ deposit.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainTitle %}
+    {% if deposit.state == 'provisoire' %}
+        Facture d'acompte {{ deposit.state }}
+    {% endif %}
+    {% if deposit.state == 'finalisée' or deposit.state == 'payée' %}
+        Facture d'acompte FA{{ deposit.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                    <fieldset>
+                        <legend class="my-5">Informations</legend>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Statut:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.state }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Crée le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getCreatedAt()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Dernière modification le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getLastUpdate()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        {% if deposit.state == 'finalisée' or deposit.state == 'payée' %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Finalisée le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ deposit.getFinalizationAt()|date('d-m-y à h:i:s') }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        {% if deposit.state == 'payée'%}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Payée le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ deposit.getpayedAt()|date('d-m-y') }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Destinataire</legend>
+                        {% if deposit.quotation.businessClient != null %}
+                            {% set destinataire = deposit.quotation.businessClient %}
+                            {% set vue = 'vue_proClient' %}
+                        {% elseif deposit.quotation.particularClient != null %}
+                            {% set destinataire = deposit.quotation.particularClient %}
+                            {% set vue = 'vue_parClient' %}
+                        {% else %}
+                            {% set destinataire = deposit.quotation.company %}
+                            {% set vue = 'vue_societe' %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Destinataire:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                <a style="text-decoration: none" href="{{ path(vue,{'id':destinataire.id}) }}">{{ destinataire }}</a>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Détail</legend>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Montant</th>
+                                <th scope="col">TVA</th>
+                                <th scope="col">Total TTC</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td>Acompte de {{ deposit.calculPourCentAgeAcompte() }}% pour le devis D{{ deposit.quotation.numerotation}} de {{ deposit.quotation.calculTotalHt()}} € HT</td>
+                                    {% if deposit.getTvaNonApplicable() == false %}
+                                        <td>{{ deposit.calculMontant() }}</td>
+                                    {% else %}
+                                        <td>{{ deposit.getMontantPayer() }}</td>
+                                    {% endif %}
+
+                                    <td>
+                                    {% if deposit.getTvaNonApplicable() == false %}
+                                        {{ deposit.tva }}%
+                                    {% endif %}
+                                    </td>
+                                    <td>{{ deposit.getMontantPayer() }} €</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Conditions</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Conditions de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getConditionReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Mode de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getModeReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Intérêts de retard:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getInteretRetard() }}
+                            </div>
+                        </div>
+                        {% if deposit.getCompteBancaire() != null %}
+                         <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Compte bancaire:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getCompteBancaire().getLibelle() }}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Textes affichés sur le document</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte d'introduction:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getTextIntroduction() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte de conclusion:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getTextConclusion() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Pied de page:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ deposit.getPiedPage() }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Documents liés</legend>
+                        <div class="container p-0">
+                            <div class="row">
+
+                                {% set quotation = deposit.quotation %}
+                                <div class="col-12 col-md-12  my-1">
+                                    <div class="card">
+
+                                        <div class="card-header ">
+                                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: forestgreen">Signé</span></h6>
+                                                <p style="color: #727272">{{ destinataire}}</p>
+                                                {% if quotation.getTvaNonApplicable() == false %}
+                                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                                {% else %}
+                                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                                {% endif %}
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% for depos in deposit.quotation.deposits %}
+                                    {% if depos != deposit %}
+                                        <div class="col-12 col-md-12  my-1">
+                                            <div class="card">
+
+                                                <div class="card-header ">
+                                                    {% if depos.state == 'finalisée' %}
+                                                        <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':depos.id}) }}">FA{{ depos.numerotation }}</a> <span style="color: #2470dc">Finalisée</span></h6>
+                                                        <p style="color: #727272">{{ destinataire }}</p>
+                                                        {% if depos.getTvaNonApplicable() == false %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.calculMontant()}} € HT &nbsp; {{ depos.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ depos.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                        {% else %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ depos.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                        {% endif %}
+                                                    {% elseif  depos.state == 'payée' %}
+                                                        <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':depos.id}) }}">FA{{ depos.numerotation }}</a> <span style="color: forestgreen">Payée</span></h6>
+                                                        <p style="color: #727272">{{ destinataire}}</p>
+                                                        {% if depos.getTvaNonApplicable() == false %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.calculMontant()}} € HT &nbsp; {{ depos.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ depos.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ depos.getPayedAt()|date('d/m/y') }}</p></div>
+                                                        {% else %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ depos.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ depos.getPayedAt()|date('d/m/y') }}</p></div>
+                                                        {% endif %}
+                                                    {% else %}
+                                                        <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':depos.id}) }}">{{ depos.state}}</a></h6>
+                                                        <p style="color: #727272">{{ destinataire }}</p>
+                                                        {% if depos.getTvaNonApplicable() == false %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.calculMontant()}} € HT &nbsp; {{ depos.getMontantpayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar"></i> {{ depos.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                        {% else %}
+                                                            <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ depos.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ depos.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                        {% endif %}
+
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+            {% if deposit.state == 'provisoire' %}
+                <li><a class="dropdown-item" href="#finalise" data-toggle="modal">Finaliser</a></li>
+                <li><a class="dropdown-item" href="{{ path('edit_facture_acompte',{'id':deposit.id}) }}">Modifier</a></li>
+                <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+                <hr>
+            {% endif %}
+            {% if deposit.state == 'finalisée' %}
+                <li><a class="dropdown-item trigger-btn" href="#payer" data-toggle="modal">Marquer comme payée</a></li>
+                <hr>
+            {% endif %}
+            {% if deposit.state == 'payée' %}
+                <li><a class="dropdown-item" href="{{ path('annuler_paiement_facture_acompte',{'id':deposit.id}) }}">Annuler le paiement</a></li>
+                <hr>
+            {% endif %}
+            <li><a class="dropdown-item" href="{{ path('dupliquer_facture_acompte_devis',{'id':deposit.id}) }}">Dupliquer en devis</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_facture_acompte_facture',{'id':deposit.id}) }}">Dupliquer en facture</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_facture_acompte_opportunite',{'id':deposit.id}) }}">Dupliquer en opportunité</a></li>
+
+
+        </ul>
+    </div>
+    {% include 'confirmation/vuePaiementFactureAcompte.html.twig'  %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'voulez vous vraiment supprimer cette facture d\'acompte ?','route':path('delete_facture_acompte',{'id':deposit.id})} %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'finalise','message':"<p>Vous êtes sur le point de transformer ce brouillon en facture d'acompte officielle. Cela lui attribuera un numéro et vous permettra de l'envoyer à votre client.</p><p>Cette action n'est pas réversible. Vous ne pourrez plus modifier ou effacer cette facture d'acompte. Confirmez-vous cette action ?</p>" ,'route':path('finaliser_facture_acompte',{'id':deposit.id}) } %}
+{% endblock %}

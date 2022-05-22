@@ -1,0 +1,58 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Nouvelle facture d'acompte{% endblock %}
+{% block mainTitle %}Nouvelle facture d'acompte{% endblock %}
+{% block mainBody %}
+
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+
+                {{ form_widget(form._token) }}
+
+                <fieldset class="mb-3">
+                    <legend>Devis</legend>
+                    {{ form_row(form.quotation) }}
+                </fieldset>
+
+                <fieldset class="mb-3">
+                    <legend>Montant</legend>
+                    {{ form_row(form.montant_payer) }}
+                    {% for message in app.flashes('error') %}
+                        <div style="color: red" >
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    {{ form_row(form.tva) }}
+                    <div class="my-3">
+                        {{ form_widget(form.tva_non_applicable) }}
+                        {{ form_label(form.tva_non_applicable) }}
+                    </div>
+                </fieldset>
+
+                <fieldset class="mb-3">
+                    <legend>Règlement</legend>
+                    {{ form_row(form.condition_reglement) }}
+                    {{ form_row(form.mode_reglement) }}
+                    {{ form_row(form.interet_retard) }}
+                    {{ form_row(form.compte_bancaire) }}
+                </fieldset>
+
+                <fieldset class="mb-3">
+                    <legend>Textes affichés sur le document</legend>
+                    {{ form_row(form.text_introduction) }}
+                    {{ form_row(form.text_conclusion) }}
+                    {{ form_row(form.pied_page) }}
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Créer la facture d'acompte</button>
+
+                {{ form_end(form,{render_rest: false}) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

@@ -1,0 +1,351 @@
+{% extends 'default/dashboard.html.twig' %}
+
+
+{% block title %}
+    {% if quotation.state == 'provisoire' %}
+        Devis {{ quotation.state }}
+    {% endif %}
+    {% if quotation.state == 'finalisé' or quotation.state == 'refusé' or quotation.state == 'signé' %}
+        Devis D{{ quotation.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainTitle %}
+    {% if quotation.state == 'provisoire' %}
+        Devis {{ quotation.state }}
+    {% endif %}
+    {% if quotation.state == 'finalisé' or quotation.state == 'refusé' or quotation.state == 'signé' %}
+        Devis D{{ quotation.numerotation }}
+    {% endif %}
+{% endblock %}
+
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                    <fieldset>
+                        <legend class="my-5">Informations</legend>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Statut:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.state }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Crée le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getCreatedAt()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Dernière modification le:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getLastUpdate()|date('d-m-y à h:i:s') }}
+                            </div>
+                        </div>
+                        <hr>
+                        {% if quotation.state == 'finalisé' or quotation.state == 'refusé' or quotation.state == 'signé'%}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Finalisé le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.getFinalizationAt()|date('d-m-y à h:i:s') }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+                        {% if quotation.state == 'signé'%}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Signé le :</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.getSignedAt()|date('d-m-y') }}
+                                </div>
+                            </div>
+                            <hr>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Durée de validité:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getDureeValidite() }} jours
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Destinataire</legend>
+                        {% if quotation.businessClient != null %}
+                            {% set destinataire = quotation.businessClient %}
+                            {% set vue = 'vue_proClient' %}
+                        {% elseif quotation.particularClient != null %}
+                            {% set destinataire = quotation.particularClient %}
+                            {% set vue = 'vue_parClient' %}
+                        {% else %}
+                            {% set destinataire = quotation.company %}
+                            {% set vue = 'vue_societe' %}
+                        {% endif %}
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Destinataire:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                <a style="text-decoration: none" href="{{ path(vue,{'id':destinataire.id}) }}">{{ destinataire }}</a>
+                            </div>
+                        </div>
+
+
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Détail</legend>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th scope="col"></th>
+                                <th scope="col">Type</th>
+                                <th scope="col">Description</th>
+                                <th scope="col">Prix unitaire HT</th>
+                                <th scope="col">Quantité</th>
+                                {% if quotation.getTvaNonApplicable() == false %}
+                                    <th scope="col">TVA</th>
+                                {% endif %}
+                                <th scope="col">Réduction</th>
+                                <th scope="col">Total HT</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for article in quotation.articles %}
+                                <tr>
+                                    <th scope="row"></th>
+                                    <td>{{ article.getTypeArticle() }}</td>
+                                    <td>{{ article.description }}</td>
+                                    <td>{{ article.getPrixHt() }} €</td>
+                                    <td>{{ article.quantite }}</td>
+                                    {% if quotation.getTvaNonApplicable() == false %}
+                                        <td>{{ article.tva }}%</td>
+                                    {% endif %}
+                                    <td>{{ article.reduction }}%</td>
+                                    <td>{{ article.calculTotalHt() }} €</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% if quotation.getTvaNonApplicable() == false %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total HT:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.calculTotalHt() }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">TVA:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.calculTva }} €
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total TTC:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.calculTtc() }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">{{ text_tva }}</h6>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <h6 class="mb-0">Total:</h6>
+                                </div>
+                                <div class="col-sm-6 text-secondary">
+                                    {{ quotation.calculTotalHt() }} €
+                                </div>
+                            </div>
+                        {% endif %}
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Conditions</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Conditions de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getConditionReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Mode de règlement:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getModeReglement() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Intérêts de retard:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getInteretRetard() }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Textes affichés sur le document</legend>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte d'introduction:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getTextIntroduction() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Texte de conclusion:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getTextConclusion() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Pied de page:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getPiedPage() }}
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <h6 class="mb-0">Conditions générales de vente:</h6>
+                            </div>
+                            <div class="col-sm-6 text-secondary">
+                                {{ quotation.getConditionsGenerales() }}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Documents liés</legend>
+                        <div class="container p-0">
+                            <div class="row">
+                                {% for deposit in quotation.deposits %}
+
+                                    <div class="col-12 col-md-12  my-1">
+                                        <div class="card">
+
+                                            <div class="card-header ">
+                                                {% if deposit.state == 'finalisée' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">FA{{ deposit.numerotation }}</a> <span style="color: #2470dc">Finalisée</span></h6>
+                                                    <p style="color: #727272">{{ destinataire}}</p>
+                                                    {% if deposit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% elseif  deposit.state == 'payée' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">FA{{ deposit.numerotation }}</a> <span style="color: forestgreen">Payée</span></h6>
+                                                    <p style="color: #727272">{{ destinataire}}</p>
+                                                    {% if deposit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ deposit.getPayedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ deposit.getPayedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">{{ deposit.state}}</a></h6>
+                                                    <p style="color: #727272">{{ destinataire }}</p>
+                                                    {% if deposit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantpayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar"></i> {{ deposit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ deposit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+        <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+        </a>
+
+        <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+            {% if quotation.state == 'provisoire' %}
+                <li><a class="dropdown-item" href="#finalise" data-toggle="modal">Finaliser</a></li>
+                <li><a class="dropdown-item" href="{{ path('edit_devis',{'id':quotation.id}) }}">Modifier</a></li>
+                <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+                <hr>
+            {% endif %}
+            {% if quotation.state == 'finalisé' %}
+                <li><a class="dropdown-item trigger-btn" href="#signature" data-toggle="modal">Marquer comme signé</a></li>
+                <li><a class="dropdown-item" href="{{ path('refuser_devis',{'id':quotation.id}) }}">Marquer comme refusé</a></li>
+                <hr>
+            {% endif %}
+            {% if quotation.state == 'refusé' %}
+                <li><a class="dropdown-item" href="{{ path('annuler_refus_devis',{'id':quotation.id}) }}">Annuler le refus</a></li>
+                <hr>
+            {% endif %}
+            {% if quotation.state == 'signé' %}
+                {% if quotation.deposits|length == 0 %}
+                    <li><a class="dropdown-item" href="{{ path('annuler_signature_devis',{'id':quotation.id}) }}">Annuler la signature</a></li>
+                    <hr>
+                {% endif%}
+            {% endif %}
+            <li><a class="dropdown-item" href="{{ path('dupliquer_devis',{'id':quotation.id}) }}">Dupliquer le devis</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_devis_facture',{'id':quotation.id}) }}">Dupliquer en facture</a></li>
+            <li><a class="dropdown-item" href="{{ path('dupliquer_devis_opportunite',{'id':quotation.id}) }}">Dupliquer en opportunité</a></li>
+
+        </ul>
+    </div>
+    {% include 'confirmation/vueSignatureDevis.html.twig'  %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'voulez vous vraiment supprimer ce devis ?','route':path('delete_devis',{'id':quotation.id})} %}
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'finalise','message':"<p>Vous êtes sur le point de transformer ce brouillon en devis officiel. Cela lui attribuera un numéro et vous permettra de l\'envoyer à votre client. ?</p><p>Cette action n\'est pas réversible. Vous ne pourrez plus modifier ou effacer ce devis. Confirmez-vous cette action ?</p>" ,'route':path('finaliser_devis',{'id':quotation.id}) } %}
+{% endblock %}

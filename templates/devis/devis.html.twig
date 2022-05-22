@@ -1,0 +1,98 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Devis{% endblock %}
+{% block mainTitle %}Devis({{ (quotations|length) }}){% endblock %}
+{% block navbar %}
+    <header class="navbar navbar-light  shadow mb-5" style="border-radius: 10px;background-color:#3f038f">
+
+
+
+            <div class="navbar-nav ">
+                <div class="nav-item text-nowrap">
+                    <a style="color: white" class="nav-link px-3" href="{{ path('devis') }}">TOUS</a>
+                </div>
+            </div>
+            <div class="navbar-nav ">
+                <div class="nav-item text-nowrap">
+                    <a style="color: white" class="nav-link px-3" href="{{ path('devis_provisoires') }}">PROVISOIRES</a>
+                </div>
+            </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('devis_finalises') }}">FINALISÉS</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('devis_refuses') }}">REFUSÉS</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('devis_signes') }}">SIGNÉS</a>
+            </div>
+        </div>
+
+    </header>
+
+{% endblock %}
+{% block mainBody %}
+
+    <div class="container p-0">
+        <div class="row">
+            {% for quotation in quotations %}
+                {% if quotation.businessClient != null %}
+                    {% set destinataire = quotation.businessClient %}
+                {% elseif quotation.particularClient != null %}
+                    {% set destinataire = quotation.particularClient %}
+                {% else %}
+                    {% set destinataire = quotation.company %}
+                {% endif %}
+                <div class="col-12 col-md-12  my-1">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            {% if quotation.state == 'finalisé' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: #2470dc">Finalisé</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if quotation.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% elseif  quotation.state == 'signé' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: forestgreen">Signé</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if quotation.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% elseif  quotation.state == 'refusé' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: red">Refusé</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if quotation.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% else %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">{{ quotation.state}}</a></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if quotation.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar"></i> {{ quotation.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ quotation.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_devis') }}" class="btn btn-sm btn-outline-secondary">Créer un devis</a>{% endblock %}
+{% block export %}<button type="button" class="btn btn-sm btn-outline-secondary">Exporter les devis</button>{% endblock %}

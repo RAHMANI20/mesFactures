@@ -1,0 +1,329 @@
+{% extends 'default/dashboard.html.twig' %}
+
+
+{% block title %}{{ company.nom }}{% endblock %}
+{% block mainTitle %}{{ company.nom }}{% endblock %}
+{% block mainBody %}
+    <div class="container">
+        <div class="main-body">
+
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="main-breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active" aria-current="page">Creation: Le {{ company.getCreatedAt()|date('d-m-y à h:i:s') }}</li>
+                </ol>
+            </nav>
+            <!-- /Breadcrumb -->
+
+            <div class="row gutters-sm">
+
+                <div class="col-md-8">
+
+                            <fieldset>
+                                <legend class="my-5">Informations</legend>
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Numéro de TVA</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getNumTva() }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">SIREN, SIRET...</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.siret }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Code NAF, NACE, NOGA...</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getCodeNaf() }}
+                                    </div>
+                                </div>
+                            </fieldset>
+                            <fieldset>
+                                <legend class="my-5">Coordonnées de la société</legend>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Adresse</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.adresse }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Complément d'adresse</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getComplementAdresse() }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Code postal</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getCodePostal() }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Ville</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.ville }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Pays</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.pays }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Numéro de téléphone</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getNumTelephone() }}
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <h6 class="mb-0">Site internet</h6>
+                                    </div>
+                                    <div class="col-sm-6 text-secondary">
+                                        {{ company.getSiteInternet() }}
+                                    </div>
+                                </div>
+
+                            </fieldset>
+                            <fieldset>
+                                <legend class="my-5">Clients ({{ (company.businessClients|length) }})</legend>
+                                <div class="container p-0">
+                                    <div class="row">
+                                        {% for businessClient in company.businessClients %}
+                                            <div class="col-12 col-md-12 col-lg-4 my-3">
+                                                <div class="card">
+
+                                                    <div class="card-header ">
+                                                        <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_proClient',{'id':businessClient.id}) }}">{{ businessClient.prenom ~ ' ' ~ businessClient.nom}}</a></h6>
+                                                        <p style="color: #727272">{{ businessClient.societe }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Opportunités ({{ (company.opportunities|length) }})</legend>
+                        <div class="container p-0">
+                            <div class="row">
+                                {% for opportunity in company.opportunities %}
+                                    <div class="col-12 col-md-12 col-lg-4 my-3">
+                                        <div class="card">
+
+                                            <div class="card-header ">
+                                                {% if opportunity.state == 'En cours' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: coral">En cours</span></h6>
+                                                {% elseif  opportunity.state == 'Remporté' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: forestgreen">Remporté</span></h6>
+                                                {% else %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: red">Perdu</span></h6>
+                                                {% endif %}
+                                                <p style="color: #727272">{{ company }}</p>
+                                                <div class="my-2"><p style="color: #727272"><i class="fa-solid fa-arrow-trend-up"></i> {{ opportunity.getMontantHt()}} €   ({{ opportunity.getProbabilite() }} %)  </p><p style="color: #727272"><i class="fa-solid fa-calendar-days"></i> {{ opportunity.getMoisSignature() ~ ' ' ~ opportunity.getAnneeSignature()}}</p></div>
+
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Devis ({{ (company.quotations|length) }})</legend>
+                        <div class="container p-0">
+                            <div class="row">
+                                {% for quotation in company.quotations %}
+
+                                    <div class="col-12 col-md-12  my-1">
+                                        <div class="card">
+
+                                            <div class="card-header ">
+                                                {% if quotation.state == 'finalisé' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: #2470dc">Finalisé</span></h6>
+                                                    <p style="color: #727272">{{ company}}</p>
+                                                    {% if quotation.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% elseif  quotation.state == 'signé' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: forestgreen">Signé</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if quotation.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getCreatedAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-file-signature"></i> {{ quotation.getSignedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% elseif  quotation.state == 'refusé' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">D{{ quotation.numerotation }}</a> <span style="color: red">Refusé</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if quotation.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ quotation.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_devis',{'id':quotation.id}) }}">{{ quotation.state}}</a></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if quotation.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} € HT &nbsp; {{ quotation.calculTtc()}} € TTC &nbsp;  <i class="fa-regular fa-calendar"></i> {{ quotation.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ quotation.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ quotation.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Factures ({{ (company.bills|length) }})</legend>
+                        <div class="container p-0">
+                            <div class="row">
+                                {% for bill in company.bills %}
+
+
+                                    <div class="col-12 col-md-12  my-1">
+                                        <div class="card">
+
+                                            <div class="card-header ">
+                                                {% if bill.state == 'finalisée' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture',{'id':bill.id}) }}">F{{ bill.numerotation }}</a> <span style="color: #2470dc">Finalisée</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if bill.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} € HT &nbsp; {{ bill.calculTtc() + bill.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ bill.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ bill.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% elseif  bill.state == 'payée' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture',{'id':bill.id}) }}">F{{ bill.numerotation }}</a> <span style="color: forestgreen">Payée</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if bill.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} € HT &nbsp; {{ bill.calculTtc() + bill.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ bill.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ bill.getPayedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ bill.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ bill.getPayedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture',{'id':bill.id}) }}">{{ bill.state}}</a></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if bill.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} € HT &nbsp; {{ bill.calculTtc() + bill.calculDebours()}} € TTC &nbsp; <i class="fa-regular fa-calendar"></i> {{ bill.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ bill.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ bill.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="my-5">Avoirs ({{ (company.billCredits|length) }})</legend>
+                        <div class="container p-0">
+                            <div class="row">
+                                {% for billCredit in company.billCredits %}
+
+
+                                    <div class="col-12 col-md-12  my-1">
+                                        <div class="card">
+
+                                            <div class="card-header ">
+                                                {% if billCredit.state == 'finalisé' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">A{{ billCredit.numerotation }}</a> <span style="color: #2470dc">Finalisé</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if billCredit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% elseif  billCredit.state == 'remboursé' %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">A{{ billCredit.numerotation }}</a> <span style="color: forestgreen">Remboursé</span></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if billCredit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ billCredit.getRefundedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp; <i class="fa-regular fa-calendar-check"></i> {{ billCredit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ billCredit.getRefundedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+                                                {% else %}
+                                                    <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_avoir',{'id':billCredit.id}) }}">{{ billCredit.state}}</a></h6>
+                                                    <p style="color: #727272">{{ company }}</p>
+                                                    {% if billCredit.getTvaNonApplicable() == false %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} € HT &nbsp; {{ billCredit.calculTtc() + billCredit.calculDebours()}} € TTC &nbsp; <i class="fa-regular fa-calendar"></i> {{ billCredit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% else %}
+                                                        <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ billCredit.calculTotalHt()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ billCredit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                                    {% endif %}
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+
+                            </div>
+                        </div>
+                    </fieldset>
+
+
+
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block export %}
+    <div class="dropdown">
+    <a href="#" data-toggle="dropdown" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" color="grey" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-more-horizontal align-middle"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg>
+    </a>
+
+    <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item" href="{{ path('edit_societe',{'id':company.id}) }}">Modifier</a></li>
+        <li><a class="dropdown-item trigger-btn" href="#delete" data-toggle="modal">Supprimer</a></li>
+    </ul>
+    </div>
+
+    {% include 'confirmation/vueConfirmation.html.twig' with {'id':'delete','message':'Voulez-vous vraiment supprimer cette societé ?','route':path('delete_societe',{'id':company.id})} %}
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+{% block title %}Paramètres . Comptes bancaires{% endblock %}
+{% block mainTitle %}Comptes bancaires{% endblock %}
+{% block mainBody %}
+    <div class="container p-0">
+        <div class="row">
+            {% for bankAccount in bankAccounts %}
+                <div class="col-12 col-md-12 col-lg-4 my-3">
+                    <div class="card">
+                        <div class="card-header ">
+                            <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_compte_bancaire',{'id':bankAccount.id}) }}">{{ bankAccount.titulaire}}</a></h6>
+                            <p style="color: #727272">{{ bankAccount.iban }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_compte_bancaire') }}" class="btn btn-sm btn-outline-secondary">Ajouter un compte</a>{% endblock %}
+

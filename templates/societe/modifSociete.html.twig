@@ -1,0 +1,64 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Modifier {{ company.nom }}{% endblock %}
+{% block mainTitle %}Modifier {{ company.nom }}{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="mb-3">
+                    <legend>Informations</legend>
+                    <div class="my-3">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.num_tva) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.siret) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.code_naf) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.langue) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Coordonnées de la société</legend>
+                    <div class="my-3">
+                        {{ form_row(form.adresse) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.complement_adresse) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.code_postal) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.ville) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.pays) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.site_internet) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.num_telephone) }}
+                    </div>
+
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Modifier la société</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

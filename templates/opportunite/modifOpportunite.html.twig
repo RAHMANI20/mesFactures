@@ -1,0 +1,128 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Modifier l'opportunité{% endblock %}
+{% block mainTitle %}
+    {% if opportunity.businessClient != null %}
+        {% set destinataire = opportunity.businessClient %}
+    {% elseif opportunity.particularClient != null %}
+        {% set destinataire = opportunity.particularClient %}
+    {% else %}
+        {% set destinataire = opportunity.company %}
+    {% endif %}
+    Modifier l'opportunité pour {{ destinataire }}
+{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+
+                {{ form_widget(form._token) }}
+
+                <fieldset class="mb-3">
+                    <legend>Destinataire</legend>
+                    {{ form_row(form.destinataire) }}
+                    <div id="professionnel">
+                        {{ form_row(form.businessClient) }}
+                    </div>
+                    <div id="particulier">
+                        {{ form_row(form.particularClient) }}
+                    </div>
+                    <div id="societe">
+                        {{ form_row(form.company) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Informations</legend>
+                    <div class="my-3">
+                        {{ form_row(form.intitule) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.montant_ht) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.devise) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.mois_signature) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_row(form.annee_signature) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_label(form.probabilite) }}:
+                        <input style="background-color: #999999;border: none;width: 45px;text-align: center" class="ml-2" id="rangeInput" >
+                    </div>
+                    {{ form_widget(form.probabilite) }}
+
+
+                    <div class="my-3">
+                        {{ form_row(form.notes) }}
+                    </div>
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Modifier l'opportunité</button>
+
+                {{ form_end(form,{render_rest: false}) }}
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        if(document.getElementById("opportunity_businessClient").value != ""){
+            document.getElementById("opportunity_destinataire").options.selectedIndex = 1;
+            $("#professionnel").show();
+        }else if(document.getElementById("opportunity_particularClient").value != ""){
+            document.getElementById("opportunity_destinataire").options.selectedIndex = 2;
+            $("#particulier").show();
+        }else if(document.getElementById("opportunity_company").value != ""){
+            document.getElementById("opportunity_destinataire").options.selectedIndex = 3;
+            $("#societe").show();
+        }
+        $(document).ready(function(){
+            $("#opportunity_destinataire").change(function(){
+                $(this).find("option:selected").each(function(){
+                    var val = $(this).attr("value");
+                    if(val == "professionnel"){
+                        $("#professionnel").show();
+                        document.getElementById("particulier").style.display ='none';
+                        $("#opportunity_particularClient").val(null);
+                        document.getElementById("societe").style.display ='none';
+                        $("#opportunity_company").val(null);
+                    } else if (val == "particulier") {
+                        document.getElementById("professionnel").style.display ='none';
+                        $("#opportunity_businessClient").val(null);
+                        $("#particulier").show();
+                        document.getElementById("societe").style.display ='none';
+                        $("#opportunity_company").val(null);
+                    } else if (val == "societe") {
+                        document.getElementById("professionnel").style.display ='none';
+                        $("#opportunity_businessClient").val(null);
+                        document.getElementById("particulier").style.display ='none';
+                        $("#opportunity_particularClient").val(null);
+                        $("#societe").show();
+                    } else{
+                        document.getElementById("professionnel").style.display ='none';
+                        document.getElementById("particulier").style.display ='none';
+                        document.getElementById("societe").style.display ='none';
+
+                    }
+                });
+            }).change();
+        });
+
+
+        /* for range input */
+
+        document.getElementById('rangeInput').value = document.querySelector('.form-range').value + '%';
+
+        function updateInput(val) {
+            document.getElementById('rangeInput').value=val + '%';
+        }
+    </script>
+
+{% endblock %}

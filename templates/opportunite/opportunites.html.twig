@@ -1,0 +1,67 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Opportunités{% endblock %}
+{% block mainTitle %}Opportunités({{ (opportunities|length) }}){% endblock %}
+{% block navbar %}
+    <header class="navbar navbar-light  shadow mb-5" style="border-radius: 10px;background-color:#3f038f">
+
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('opportunites') }}">TOUTES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('opportunites_en_cours') }}">EN COURS</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('opportunites_remportees') }}">REMPORTÉES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('opportunites_perdues') }}">PERDUES</a>
+            </div>
+        </div>
+
+    </header>
+
+{% endblock %}
+{% block mainBody %}
+
+    <div class="container p-0">
+        <div class="row">
+            {% for opportunity in opportunities %}
+                {% if opportunity.businessClient != null %}
+                    {% set destinataire = opportunity.businessClient %}
+                {% elseif opportunity.particularClient != null %}
+                    {% set destinataire = opportunity.particularClient %}
+                {% else %}
+                    {% set destinataire = opportunity.company %}
+                {% endif %}
+                <div class="col-12 col-md-12 col-lg-4 my-3">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            {% if opportunity.state == 'En cours' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: coral">En cours</span></h6>
+                            {% elseif  opportunity.state == 'Remporté' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: forestgreen">Remporté</span></h6>
+                            {% else %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_opportunite',{'id':opportunity.id}) }}">{{ opportunity.intitule }}</a> <span style="color: red">Perdu</span></h6>
+                            {% endif %}
+                            <p style="color: #727272">{{ destinataire}}</p>
+                            <div class="my-2"><p style="color: #727272"><i class="fa-solid fa-arrow-trend-up"></i> {{ opportunity.getMontantHt()}} €   ({{ opportunity.getProbabilite() }} %) </p><p style="color: #727272"><i class="fa-solid fa-calendar-days"></i> {{ opportunity.getMoisSignature() ~ ' ' ~ opportunity.getAnneeSignature()}}</p></div>
+
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_opportunite') }}" class="btn btn-sm btn-outline-secondary">Ajouter une opportunité</a>{% endblock %}
+{% block export %}<button type="button" class="btn btn-sm btn-outline-secondary">Exporter les opportunités</button>{% endblock %}

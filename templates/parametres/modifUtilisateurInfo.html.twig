@@ -1,0 +1,76 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+{% block title %}Paramètres . Coordonnées{% endblock %}
+{% block mainTitle %}Coordonnées{% endblock %}
+
+{% block mainBody %}
+    {% for message in app.flashes('message') %}
+        <div class="alert alert-success" role="alert">
+            {{ message }}
+        </div>
+    {% endfor %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+
+                {{ form_widget(form._token) }}
+
+                <fieldset class="my-3">
+                    <div class="mb-3">
+                        {{ form_row(form.email_pro) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.prenom) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.nom) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.societe) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.siret) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.code_naf) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.num_tva) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.adresse) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.complement_adresse) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.code_postal) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.ville) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.pays) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.num_telephone) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.site_internet) }}
+                    </div>
+
+
+
+                </fieldset>
+
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Enregistrer</button>
+
+                {{ form_end(form,{render_rest: false}) }}
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

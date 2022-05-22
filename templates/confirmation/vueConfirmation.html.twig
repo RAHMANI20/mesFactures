@@ -1,0 +1,19 @@
+{#<div class="text-center">#}
+{#    <!-- Button HTML (to Trigger Modal) -->#}
+{#    <a href="#myModal" class="trigger-btn" data-toggle="modal">Click to Open Confirm Modal</a>#}
+{#</div>#}
+
+<!-- Modal HTML -->
+<div id="{{ id }}" class="modal fade">
+    <div class="modal-dialog modal-confirm ">
+        <div class="modal-content">
+            <div class="modal-body ">
+                <span>{{ message|raw }}</span>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a class="btn btn-danger" data-dismiss="modal">Annuler</a>
+                <a href="{{ route }}" class="btn btn-success">Confirmer</a>
+            </div>
+        </div>
+    </div>
+</div>

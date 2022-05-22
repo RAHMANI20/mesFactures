@@ -1,0 +1,52 @@
+{% extends 'parametres/parametres.html.twig' %}
+
+
+{% block title %}Paramètres . Préférences générales {% endblock %}
+{% block mainTitle %}Préférences générales{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+                <fieldset class="my-3">
+
+                    <div class="mb-3">
+                        {{ form_row(form.pays) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.devise) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.type_article) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.tva) }}
+                    </div>
+                    <div class="my-3">
+                        {{ form_widget(form.tva_non_applicable) }}
+                        {{ form_label(form.tva_non_applicable) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.text_tva) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.condition_reglement) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.mode_reglement) }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form_row(form.interet_retard) }}
+                    </div>
+
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Enregistrer</button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </section>
+
+
+{% endblock %}

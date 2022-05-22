@@ -1,0 +1,23 @@
+<header class="navbar navbar-light sticky-top  shadow mb-5" style="background-color: #3f038f;">
+
+    {% if app.user %}
+        <a style="color: white" class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ path('dashboard') }}"> {{ app.user.prenom }} </a>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('app_logout') }}">Deconnexion</a>{% block menuTitle %}hhhh{% endblock %}
+            </div>
+        </div>
+    {% else %}
+        <a  style="color: white" class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="{{ path('main') }}">Mes Factures</a>
+        <div class="navbar-nav ms-auto">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('app_register') }}">Inscription</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('app_login') }}">Connexion</a>
+            </div>
+        </div>
+    {% endif %}
+</header>

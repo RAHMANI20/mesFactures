@@ -1,0 +1,225 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Nouvelle facture{% endblock %}
+{% block mainTitle %}Nouvelle facture{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col">
+
+                {{ form_start(form) }}
+
+                {{ form_widget(form._token) }}
+
+                <fieldset class="mb-3">
+                    <legend>Destinataire</legend>
+                    {{ form_row(form.destinataire) }}
+                    <div id="professionnel">
+                        {{ form_row(form.businessClient) }}
+                    </div>
+                    <div id="particulier">
+                        {{ form_row(form.particularClient) }}
+                    </div>
+                    <div id="societe">
+                        {{ form_row(form.company) }}
+                    </div>
+
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Informations</legend>
+                    {{ form_row(form.devise) }}
+                    <div class="my-3">
+                        {{ form_widget(form.tva_non_applicable) }}
+                        {{ form_label(form.tva_non_applicable) }}
+                    </div>
+                </fieldset>
+
+                <fieldset class="mb-3">
+                    <legend>Articles</legend>
+                    <ul class="articles" style="list-style-type: none"
+                        data-index="{{ form.articles|length > 0 ? form.articles|last.vars.name + 1 : 0 }}"
+                        data-prototype="{{ form_widget(form.articles.vars.prototype)|e('html_attr') }}">
+                        {% for article in form.articles %}
+                            <li class="col-md-12">{{ form_row(article.type_article) }}</li>
+                            <li class="col-md-3">{{ form_row(article.quantite) }}</li>
+                            <li class="col-md-3">{{ form_row(article.prix_ht) }}</li>
+                            <li class="col-md-3">{{ form_row(article.tva) }}</li>
+                            <li class="col-md-3">{{ form_row(article.reduction) }}</li>
+                            <li class="col-md-3">{{ form_row(article.description) }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a type="button" style="text-decoration: #333333" class="add_article_item_link" data-collection-holder-class="articles"><i class="fa-solid fa-circle-plus"></i> Ajouter un article</a>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Débours</legend>
+                    <ul class="disbursements" style="list-style-type: none"
+                        data-index="{{ form.disbursements|length > 0 ? form.disbursements|last.vars.name + 1 : 0 }}"
+                        data-prototype="{{ form_widget(form.disbursements.vars.prototype)|e('html_attr') }}">
+                        {% for disbursement in form.disbursements %}
+                            <li class="col-md-12">{{ form_row(disbursement.reference_facture) }}</li>
+                            <li class="col-md-3">{{ form_row(disbursement.montant_ht) }}</li>
+                            <li class="col-md-3">{{ form_row(disbursement.description) }}</li>
+                        {% endfor %}
+                    </ul>
+                    <a type="button" style="text-decoration: #333333" class="add_disbursement_item_link" data-collection-holder-class="disbursements"><i class="fa-solid fa-circle-plus"></i> Ajouter un Débours</a>
+                </fieldset>
+                <fieldset class="mb-3">
+                    <legend>Règlement</legend>
+                    {{ form_row(form.condition_reglement) }}
+                    {{ form_row(form.mode_reglement) }}
+                    {{ form_row(form.interet_retard) }}
+                    {{ form_row(form.compte_bancaire) }}
+                </fieldset>
+
+                <fieldset class="mb-3">
+                    <legend>Textes affichés sur le document</legend>
+                    {{ form_row(form.text_introduction) }}
+                    {{ form_row(form.text_conclusion) }}
+                    {{ form_row(form.pied_page) }}
+                </fieldset>
+
+                <button type="submit" class="btn btn-success btn-lg my-3">Créer la facture</button>
+
+                {{ form_end(form,{render_rest: false}) }}
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const addArticleFormToCollection = (e) => {
+
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+            addArticleFormDeleteLink(item);
+        };
+
+        const addDisbursementFormToCollection = (e) => {
+
+            const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
+
+            const item = document.createElement('li');
+
+            item.innerHTML = collectionHolder
+                .dataset
+                .prototype
+                .replace(
+                    /__name__/g,
+                    collectionHolder.dataset.index
+                );
+
+            collectionHolder.appendChild(item);
+
+            collectionHolder.dataset.index++;
+            addDisbursementFormDeleteLink(item);
+        };
+
+
+
+        const addArticleFormDeleteLink = (item) => {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.classList.add('btn','btn-danger','my-3');
+            removeFormButton.innerText = 'Supprimer l\'article';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // remove the li for the tag form
+                item.remove();
+            });
+        }
+
+        const addDisbursementFormDeleteLink = (item) => {
+            const removeFormButton = document.createElement('button');
+            removeFormButton.classList.add('btn','btn-danger','my-3');
+            removeFormButton.innerText = 'Supprimer le Débours';
+
+            item.append(removeFormButton);
+
+            removeFormButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                // remove the li for the tag form
+                item.remove();
+            });
+        }
+
+
+        document
+            .querySelectorAll('.add_article_item_link')
+            .forEach(btn => {
+                btn.addEventListener("click", addArticleFormToCollection)
+            });
+        document
+            .querySelectorAll('.add_disbursement_item_link')
+            .forEach(btn => {
+                btn.addEventListener("click", addDisbursementFormToCollection)
+            });
+
+
+
+        document
+            .querySelectorAll('ul.articles li')
+            .forEach((article) => {
+                addArticleFormDeleteLink(article)
+            })
+        document
+            .querySelectorAll('ul.disbursements li')
+            .forEach((disbursement) => {
+                addDisbursementFormDeleteLink(disbursement)
+            })
+
+
+    </script>
+
+
+
+
+    <script>
+        $(document).ready(function(){
+            $("#bill_destinataire").change(function(){
+                $(this).find("option:selected").each(function(){
+                    var val = $(this).attr("value");
+                    if(val == "professionnel"){
+                        $("#professionnel").show();
+                        document.getElementById("particulier").style.display ='none';
+                        $("#bill_particularClient").val(null);
+                        document.getElementById("societe").style.display ='none';
+                        $("#bill_company").val(null);
+                    } else if (val == "particulier") {
+                        document.getElementById("professionnel").style.display ='none';
+                        $("#bill_businessClient").val(null);
+                        $("#particulier").show();
+                        document.getElementById("societe").style.display ='none';
+                        $("#bill_company").val(null);
+                    } else if (val == "societe") {
+                        document.getElementById("professionnel").style.display ='none';
+                        $("#bill_businessClient").val(null);
+                        document.getElementById("particulier").style.display ='none';
+                        $("#bill_particularClient").val(null);
+                        $("#societe").show();
+                    } else{
+                        document.getElementById("professionnel").style.display ='none';
+                        document.getElementById("particulier").style.display ='none';
+                        document.getElementById("societe").style.display ='none';
+                        // $("#quotation_destinataire").hide();
+                        // $("#quotation_destinataire").val(null);
+                    }
+                });
+            }).change();
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Factures d'acompte{% endblock %}
+{% block mainTitle %}Factures d'acompte({{ (deposits|length) }}){% endblock %}
+{% block navbar %}
+    <header class="navbar navbar-light  shadow mb-5" style="border-radius: 10px;background-color:#3f038f">
+
+
+
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('factures_acompte') }}">TOUTES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('factures_acompte_provisoires') }}">PROVISOIRES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('factures_acompte_finalisees') }}">FINALISÉES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('factures_acompte_payees') }}">PAYÉES</a>
+            </div>
+        </div>
+        <div class="navbar-nav ms-0">
+            <div class="nav-item text-nowrap">
+                <a style="color: white" class="nav-link px-3" href="{{ path('factures_acompte_a_payer') }}">À PAYER</a>
+            </div>
+        </div>
+
+    </header>
+
+
+{% endblock %}
+{% block mainBody %}
+
+    <div class="container p-0">
+        <div class="row">
+            {% for deposit in deposits %}
+                {% if deposit.quotation.businessClient != null %}
+                    {% set destinataire = deposit.quotation.businessClient %}
+                {% elseif deposit.quotation.particularClient != null %}
+                    {% set destinataire = deposit.quotation.particularClient %}
+                {% else %}
+                    {% set destinataire = deposit.quotation.company %}
+                {% endif %}
+                <div class="col-12 col-md-12  my-1">
+                    <div class="card">
+
+                        <div class="card-header ">
+                            {% if deposit.state == 'finalisée' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">FA{{ deposit.numerotation }}</a> <span style="color: #2470dc">Finalisée</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if deposit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% elseif  deposit.state == 'payée' %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">FA{{ deposit.numerotation }}</a> <span style="color: forestgreen">Payée</span></h6>
+                                <p style="color: #727272">{{ destinataire}}</p>
+                                {% if deposit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantPayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ deposit.getPayedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar-check"></i> {{ deposit.getFinalizationAt()|date('d/m/y') }} &nbsp; <i class="fa-solid fa-money-check-dollar"></i> {{ deposit.getPayedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+                            {% else %}
+                                <h6 class="card-title mb-0 mt-3"><a style="text-decoration: none;color: #333333" href="{{ path('vue_facture_acompte',{'id':deposit.id}) }}">{{ deposit.state}}</a></h6>
+                                <p style="color: #727272">{{ destinataire }}</p>
+                                {% if deposit.getTvaNonApplicable() == false %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.calculMontant()}} € HT &nbsp; {{ deposit.getMontantpayer()}} € TTC &nbsp;  <i class="fa-regular fa-calendar"></i> {{ deposit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% else %}
+                                    <div class="my-2"><p style="color: #727272"><i class="fa-regular fa-file"></i> {{ deposit.getMontantPayer()}} €  &nbsp;  <i class="fa-regular fa-calendar"></i> {{ deposit.getCreatedAt()|date('d/m/y') }}</p></div>
+                                {% endif %}
+
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
+{% block ajout %}<a href="{{ path('add_facture_acompte') }}" class="btn btn-sm btn-outline-secondary">Créer une facture d'acompte</a>{% endblock %}
+{% block export %}<button type="button" class="btn btn-sm btn-outline-secondary">Exporter les factures d'acompte</button>{% endblock %}

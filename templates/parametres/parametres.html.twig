@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Paramètres{% endblock %}
+
+{% block menuTitle %}<a style="color: white" class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href=""> Paramètres </a>{% endblock %}
+{% block menuColor %}darkcyan{% endblock %}
+{% block body %}
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('preferences_generales') }}">
+                                Générales
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('preferences_devis') }}">
+                                Devis
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('preferences_facture') }}">
+                                Factures
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('preferences_avoir') }}">
+                                Avoirs
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('preferences_facture_acompte') }}">
+                                Factures d'acompte
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('types_article') }}">
+                                Types d'article
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('utilisateur_infos') }}">
+                                Coordonnées
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('comptes_bancaires') }}">
+                                Comptes bancaires
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('utilisateur') }}">
+                                Compte
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('delete_account') }}">
+                                Supprimer mon compte
+                            </a>
+                        </li>
+                        <li class="nav-item mb-3">
+                            <a style="display: inline" class="nav-link " href="{{ path('dashboard') }}">
+                                <i class="fa-solid fa-circle-arrow-left"></i> Retour
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">{% block mainTitle %}{% endblock %}</h1>
+
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            {% block ajout %}{% endblock %}
+                            {% block export %}{% endblock %}
+                        </div>
+                    </div>
+                </div>
+                {% block navbar %}{% endblock %}
+                {% block mainBody %}{% endblock %}
+                <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+
+
+            </main>
+        </div>
+    </div>
+
+
+
+
+{% endblock %}

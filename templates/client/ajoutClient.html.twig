@@ -1,0 +1,26 @@
+{% extends 'default/dashboard.html.twig' %}
+
+{% block title %}Nouveau client{% endblock %}
+{% block mainTitle %}Nouveau client{% endblock %}
+{% block mainBody %}
+    <section class="container">
+        <div class="row">
+            <div class="col-12 col-md-12 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-header ">
+                       <a style="color: #333333" href="{{ path('add_parClient') }}"><div class="my-2"><i class="fa-regular fa-user fa-2x"> Particulier</i></div></a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-12 col-lg-4 my-2">
+                <div class="card">
+                    <div class="card-header ">
+                        <a style="color: #333333" href="{{ path('add_proClient') }}"><div class="my-2"><i class="fa-regular fa-building fa-2x"> Professionnel</i></div></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% block clientForm %}{% endblock %}
+{% endblock %}
+
